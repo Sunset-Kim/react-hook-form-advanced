@@ -1,8 +1,11 @@
-import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
+import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 
+import { AppShell, Burger, createTheme, MantineProvider } from "@mantine/core";
+
 import "@mantine/core/styles.css";
-import { createTheme, MantineProvider, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { NavBar } from "../shared/components";
 
 const theme = createTheme({
   defaultRadius: "md",
@@ -20,14 +23,37 @@ const theme = createTheme({
 export const Route = createRootRoute({
   component: () => (
     <MantineProvider theme={theme}>
-      <div className="p-2 flex gap-2">
-        <Link to="/" className="[&.active]:font-bold">
-          <Text size="2xl">Home</Text>
-        </Link>
-      </div>
-      <hr />
-      <Outlet />
+      <App />
       <TanStackRouterDevtools />
     </MantineProvider>
   ),
 });
+
+const App = () => {
+  const [opened, { toggle }] = useDisclosure();
+
+  return (
+    <AppShell
+      header={{ height: 60 }}
+      navbar={{
+        width: 300,
+        breakpoint: "sm",
+        collapsed: { mobile: !opened },
+      }}
+      padding="md"
+    >
+      <AppShell.Header>
+        <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+        <div>Logo</div>
+      </AppShell.Header>
+
+      <AppShell.Navbar p="md">
+        <NavBar />
+      </AppShell.Navbar>
+
+      <AppShell.Main>
+        <Outlet />
+      </AppShell.Main>
+    </AppShell>
+  );
+};

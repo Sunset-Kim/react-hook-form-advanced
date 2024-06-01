@@ -13,12 +13,18 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as DynamicFieldsImport } from './routes/dynamic-fields'
 
 // Create Virtual Routes
 
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
+
+const DynamicFieldsRoute = DynamicFieldsImport.update({
+  path: '/dynamic-fields',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
@@ -36,12 +42,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/dynamic-fields': {
+      id: '/dynamic-fields'
+      path: '/dynamic-fields'
+      fullPath: '/dynamic-fields'
+      preLoaderRoute: typeof DynamicFieldsImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({ IndexLazyRoute })
+export const routeTree = rootRoute.addChildren({
+  IndexLazyRoute,
+  DynamicFieldsRoute,
+})
 
 /* prettier-ignore-end */
 
@@ -51,11 +67,15 @@ export const routeTree = rootRoute.addChildren({ IndexLazyRoute })
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/dynamic-fields"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
+    },
+    "/dynamic-fields": {
+      "filePath": "dynamic-fields.tsx"
     }
   }
 }
