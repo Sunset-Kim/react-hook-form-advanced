@@ -5,7 +5,7 @@ export const NavBar = () => {
   return (
     <Stack>
       <Link to="/">Home</Link>
-      <Link to="/dynamic-fields">Dynamic Fields</Link>
+      <Link to="/conditional-fields">Conditional Fields</Link>
     </Stack>
   );
 };

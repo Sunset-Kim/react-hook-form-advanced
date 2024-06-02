@@ -13,18 +13,20 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as DynamicFieldsImport } from './routes/dynamic-fields'
 
 // Create Virtual Routes
 
+const ConditionalFieldsLazyImport = createFileRoute('/conditional-fields')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
 
-const DynamicFieldsRoute = DynamicFieldsImport.update({
-  path: '/dynamic-fields',
+const ConditionalFieldsLazyRoute = ConditionalFieldsLazyImport.update({
+  path: '/conditional-fields',
   getParentRoute: () => rootRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/conditional-fields.lazy').then((d) => d.Route),
+)
 
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
@@ -42,11 +44,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
-    '/dynamic-fields': {
-      id: '/dynamic-fields'
-      path: '/dynamic-fields'
-      fullPath: '/dynamic-fields'
-      preLoaderRoute: typeof DynamicFieldsImport
+    '/conditional-fields': {
+      id: '/conditional-fields'
+      path: '/conditional-fields'
+      fullPath: '/conditional-fields'
+      preLoaderRoute: typeof ConditionalFieldsLazyImport
       parentRoute: typeof rootRoute
     }
   }
@@ -56,7 +58,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
-  DynamicFieldsRoute,
+  ConditionalFieldsLazyRoute,
 })
 
 /* prettier-ignore-end */
@@ -68,14 +70,14 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/dynamic-fields"
+        "/conditional-fields"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
     },
-    "/dynamic-fields": {
-      "filePath": "dynamic-fields.tsx"
+    "/conditional-fields": {
+      "filePath": "conditional-fields.lazy.tsx"
     }
   }
 }
