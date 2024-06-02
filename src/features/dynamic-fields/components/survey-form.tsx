@@ -30,19 +30,32 @@ const SurveySchema = z
     willAdopt: z.boolean(),
     preferredPet: z.nativeEnum(PetType).optional()
   })
-  .refine(
-    data => {
-      if (data.hasPet) {
-        console.log(data)
-        return data.petName !== undefined && data.petType !== undefined
+  .superRefine((data, ctx) => {
+    if (data.hasPet) {
+      if (!data.petName) {
+        ctx.addIssue({
+          path: ['petName'],
+          message: '애완동물 이름을 입력해주세요',
+          code: z.ZodIssueCode.custom
+        })
       }
-      return true
-    },
-    {
-      message: '애완동물을 가지고 있을 때는 이름과 종류를 입력해주세요',
-      path: ['petName', 'petType']
+      if (!data.petType) {
+        ctx.addIssue({
+          path: ['petType'],
+          message: '애완동물 종류를 선택해주세요',
+          code: z.ZodIssueCode.custom
+        })
+      }
+
+      if (!data.petAge) {
+        ctx.addIssue({
+          path: ['petAge'],
+          message: '애완동물 나이를 입력해주세요',
+          code: z.ZodIssueCode.custom
+        })
+      }
     }
-  )
+  })
   .refine(
     data => {
       if (data.willAdopt) {
@@ -61,10 +74,17 @@ export type Survey = z.infer<typeof SurveySchema>
 export const SurveyForm: React.FC = () => {
   const [counter, { increment }] = useCounter()
   const [json, setJson] = useState<string>('')
-  const { register, watch, handleSubmit, unregister, control } =
-    useForm<Survey>({
-      resolver: zodResolver(SurveySchema)
-    })
+
+  const {
+    register,
+    watch,
+    handleSubmit,
+    unregister,
+    control,
+    formState: { errors }
+  } = useForm<Survey>({
+    resolver: zodResolver(SurveySchema)
+  })
 
   const hasPet = watch('hasPet')
   const willAdopt = watch('willAdopt')
@@ -89,15 +109,23 @@ export const SurveyForm: React.FC = () => {
   return (
     <Stack>
       <Chip>Render: {counter}</Chip>
-      <form onSubmit={handleSubmit(onSubmit, console.log)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Stack>
-          <Checkbox {...register('hasPet')} label="애완동물을 가지고 있나요?" />
+          <Checkbox
+            {...register('hasPet')}
+            label="애완동물을 가지고 있나요?"
+            error={errors.hasPet?.message}
+          />
 
           {
             // Show pet fields if user has a pet
             hasPet === true && (
               <>
-                <TextInput {...register('petName')} label={'애완동물 이름'} />
+                <TextInput
+                  {...register('petName')}
+                  label={'애완동물 이름'}
+                  error={errors.petName?.message}
+                />
                 <Controller
                   name="petType"
                   control={control}
@@ -106,6 +134,7 @@ export const SurveyForm: React.FC = () => {
                       data={Object.values(PetType)}
                       {...field}
                       label="애완동물 종류"
+                      error={errors.petType?.message}
                     />
                   )}
                 />
@@ -119,6 +148,7 @@ export const SurveyForm: React.FC = () => {
                       min={0}
                       max={30}
                       allowNegative={false}
+                      error={errors.petAge?.message}
                     />
                   )}
                 />
@@ -131,6 +161,7 @@ export const SurveyForm: React.FC = () => {
               <Checkbox
                 {...register('willAdopt')}
                 label="애완동물을 입양하시겠어요?"
+                error={errors.willAdopt?.message}
               />
             )
           }
@@ -143,6 +174,7 @@ export const SurveyForm: React.FC = () => {
                   data={Object.values(PetType)}
                   {...field}
                   label="선호하는 애완동물 종류"
+                  error={errors.preferredPet?.message}
                 />
               )}
             />
