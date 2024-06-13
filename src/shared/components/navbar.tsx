@@ -6,6 +6,7 @@ export const NavBar = () => {
     <Stack>
       <CustomLink to="/">Overview</CustomLink>
       <CustomLink to="/conditional-fields">조건부 입력</CustomLink>
+      <CustomLink to="/mask">입력 마스킹</CustomLink>
     </Stack>
   )
 }
