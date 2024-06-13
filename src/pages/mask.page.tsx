@@ -5,12 +5,11 @@ import { FormatInput } from '../features/mask/ui/format-input'
 import { PatternInput } from '../features/mask/ui/pattern-input'
 
 export const MaskPage = () => {
-  const [value, setValue] = useState('')
+  const [inputValue, setInputValue] = useState('')
   const [patternValue, setPatternValue] = useState('')
-  const [imaskValue, setIMaskValue] = useState('')
+  const [iMaskValue, setIMaskValue] = useState('')
 
   const ref = useRef(null)
-  const inputRef = useRef(null)
 
   return (
     <div>
@@ -20,8 +19,8 @@ export const MaskPage = () => {
         <FormatInput
           type="text"
           format={formatPhoneNumber}
-          value={value}
-          onChange={value => setValue(value)}
+          value={inputValue}
+          onChange={value => setInputValue(value)}
           placeholder="Enter phone number"
         />
       </div>
@@ -37,11 +36,10 @@ export const MaskPage = () => {
       <h2>외부 라이브러리를 활용</h2>
 
       <IMaskInput
-        value={imaskValue}
+        value={iMaskValue}
         mask={'000-000-0000'}
         unmask={true} // true|false|'typed'
         ref={ref}
-        inputRef={inputRef} // access to nested input
         placeholder="Enter number here"
         onAccept={(value: string) => setIMaskValue(value)}
       />
