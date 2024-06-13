@@ -39,7 +39,7 @@ export const MaskPage = () => {
       <IMaskInput
         value={iMaskValue}
         mask={'000-000-0000'}
-        unmask={true} // true|false|'typed'
+        unmask={false} // true|false|'typed'
         ref={ref}
         placeholder="Enter number here"
         onAccept={(value: string) => setIMaskValue(value)}

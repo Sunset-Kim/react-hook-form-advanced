@@ -12,18 +12,16 @@ export const FormatInput = ({
   placeholder
 }: FormatInputProps) => {
   const handleChange: ChangeEventHandler<HTMLInputElement> = event => {
-    const formattedValue = format?.(event.target.value) ?? event.target.value
-    onChange?.(formattedValue)
+    const formattedValue = format(event.target.value)
+    onChange(formattedValue)
   }
 
   return (
-    <div>
-      <input
-        type="text"
-        value={value}
-        onChange={handleChange}
-        placeholder={placeholder}
-      />
-    </div>
+    <input
+      type="text"
+      value={value}
+      onChange={handleChange}
+      placeholder={placeholder}
+    />
   )
 }
