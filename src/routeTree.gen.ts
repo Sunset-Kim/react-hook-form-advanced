@@ -16,10 +16,16 @@ import { Route as rootRoute } from './routes/__root'
 
 // Create Virtual Routes
 
+const MaskLazyImport = createFileRoute('/mask')()
 const ConditionalFieldsLazyImport = createFileRoute('/conditional-fields')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
+
+const MaskLazyRoute = MaskLazyImport.update({
+  path: '/mask',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/mask.lazy').then((d) => d.Route))
 
 const ConditionalFieldsLazyRoute = ConditionalFieldsLazyImport.update({
   path: '/conditional-fields',
@@ -51,6 +57,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConditionalFieldsLazyImport
       parentRoute: typeof rootRoute
     }
+    '/mask': {
+      id: '/mask'
+      path: '/mask'
+      fullPath: '/mask'
+      preLoaderRoute: typeof MaskLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -59,6 +72,7 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
   ConditionalFieldsLazyRoute,
+  MaskLazyRoute,
 })
 
 /* prettier-ignore-end */
@@ -70,7 +84,8 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/conditional-fields"
+        "/conditional-fields",
+        "/mask"
       ]
     },
     "/": {
@@ -78,6 +93,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/conditional-fields": {
       "filePath": "conditional-fields.lazy.tsx"
+    },
+    "/mask": {
+      "filePath": "mask.lazy.tsx"
     }
   }
 }
