@@ -21,3 +21,22 @@ export const formatSSN = (value: string) => {
   }
   return value
 }
+
+export const applyPatternMask = (value: string, pattern: string): string => {
+  const cleaned = value.replace(/\D/g, '') // 숫자가 아닌 모든 문자를 제거
+  let result = ''
+  let patternIndex = 0
+  let valueIndex = 0
+
+  while (patternIndex < pattern.length && valueIndex < cleaned.length) {
+    if (pattern[patternIndex] === '#') {
+      result += cleaned[valueIndex]
+      valueIndex += 1
+    } else {
+      result += pattern[patternIndex]
+    }
+    patternIndex += 1
+  }
+
+  return result
+}
